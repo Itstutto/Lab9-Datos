@@ -4,17 +4,17 @@
 
 **Created**: 2026-10-30
 
-**Status**: Draft
+**Status**: Ready for Planning
 
 **Input**: User description: "Feature: Directed graphs. Users can load a directed, unweighted graph from a CSV file and display it: its vertices and its edges."
 
 ## Clarifications
 
-*(This section records open clarification questions and user design decisions made during the specify/clarify phases.)*
+### Session 2026-10-30
 
-- **Question 1 (Row with empty target, e.g. `watch,` in `small-dag.csv`)**: [NEEDS CLARIFICATION: Should a row with a source name followed by an empty target field (e.g., 'watch,') be treated as an explicit isolated vertex (vertex with no edges), skipped with a warning as a malformed edge, or rejected as a fatal validation error?]
-- **Question 2 (Duplicate edges, e.g. `Data Structures,Algorithms` in `cs-curriculum.csv`)**: [NEEDS CLARIFICATION: When an identical directed edge appears multiple times in the CSV file, should the application issue a warning to stderr and store the edge once (deduplication), treat it as a fatal error and abort, or silently accept it?]
-- **Question 3 (CLI invocation and output presentation format)**: [NEEDS CLARIFICATION: What is the exact command-line invocation syntax and display format for vertices and edges (e.g., sectioned summary with lexicographically sorted lists of vertices and 'source -> target' edges, or an adjacency-list style grouping)?]
+- Q: How should the application process a CSV row that has a source identifier but an empty target field, such as "watch," in small-dag.csv? → A: Add as an isolated vertex with no incident edges, and emit an informational notice to stderr.
+- Q: How should the application handle repeated identical directed edges in an input CSV file, such as "Data Structures,Algorithms" in cs-curriculum.csv? → A: Warn to stderr with line number and deduplicate (store the edge once in the graph).
+- Q: What should be the exact command-line invocation syntax and stdout display layout for showing vertices and edges? → A: Sectioned lists with counts and indented items (`Vertices (N):` and `Edges (M):` with `source -> target`), sorted alphabetically, invoked via `python3 -m src.cli <file.csv>` (or `python3 -m src.cli display <file.csv>`).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -28,9 +28,18 @@ A user provides a valid CSV file containing directed dependencies (such as cours
 
 **Acceptance Scenarios**:
 
-1. **Given** a valid CSV file containing directed edges with header `source,target` (such as `data/small-dag.csv`), **When** the user runs the graph display command, **Then** the application outputs a summary count of vertices and edges, lists all unique vertices, and lists all directed edges formatted as `source -> target` in deterministic lexicographical order to stdout, exiting with status code 0.
-2. **Given** a CSV file containing only the header `source,target` and zero data rows, **When** the user runs the graph display command, **Then** the application outputs a valid empty graph summary (0 vertices, 0 edges) to stdout and exits with status code 0.
-3. **Given** a graph containing cycles and self-loops (such as `data/build-with-cycle.csv`), **When** the user runs the graph display command, **Then** the application successfully loads and displays all vertices and directed edges (including cyclic dependencies and self-loops like `metrics -> metrics`) without error, exiting with status code 0.
+1. **Given** a valid CSV file containing directed edges with header `source,target` (such as `data/small-dag.csv`), **When** the user runs `python3 -m src.cli <file.csv>`, **Then** the application outputs to stdout:
+   ```text
+   Vertices (<count>):
+     <vertex_1>
+     <vertex_2>
+   Edges (<count>):
+     <source_1> -> <target_1>
+     <source_2> -> <target_2>
+   ```
+   with all vertices and edges sorted in lexicographical order, exiting with status code 0.
+2. **Given** a CSV file containing only the header `source,target` and zero data rows, **When** the user runs the graph display command, **Then** the application outputs `Vertices (0):` and `Edges (0):` with no listed items to stdout and exits with status code 0.
+3. **Given** a graph containing cycles and self-loops (such as `data/build-with-cycle.csv`), **When** the user runs the graph display command, **Then** the application successfully loads and displays all vertices and directed edges (including cyclic dependencies and self-loops like `metrics -> metrics`) in the sectioned output without error, exiting with status code 0.
 
 ---
 
@@ -44,9 +53,9 @@ A user provides a CSV file containing irregularities or non-standard formatting 
 
 **Acceptance Scenarios**:
 
-1. **Given** a CSV file containing duplicate edges (such as rows 11 and 25 in `data/cs-curriculum.csv`), **When** the user runs the graph display command, **Then** the application reports a descriptive warning to stderr indicating the duplicate edge and row, records the unique edge, and outputs the deduplicated graph to stdout.
+1. **Given** a CSV file containing duplicate edges (such as rows 11 and 25 in `data/cs-curriculum.csv`), **When** the user runs the graph display command, **Then** the application emits a descriptive warning to stderr indicating the line number and duplicated edge, stores the edge once in the graph model, and outputs the deduplicated graph to stdout with exit status 0.
 2. **Given** a CSV file where vertex names contain leading or trailing whitespace (e.g. `" pants ", " shoes "`), **When** the user runs the graph display command, **Then** the application strips the extraneous whitespace, emits a diagnostic message to stderr noting the normalized vertex names, and uses the trimmed names in the graph.
-3. **Given** a CSV file with an empty target field (such as `watch,` in `data/small-dag.csv`), **When** the user runs the graph display command, **Then** the application processes the row according to the resolved clarification for isolated vertices vs malformed rows and reports any action taken to stderr.
+3. **Given** a CSV file with an empty target field (such as `watch,` in `data/small-dag.csv`), **When** the user runs the graph display command, **Then** the application adds the source name as an isolated vertex in the graph with degree 0, creates no edge, emits an informational notice to stderr noting the isolated vertex addition, and displays the graph with exit status 0.
 
 ---
 
@@ -84,8 +93,8 @@ A user or automated testing harness executes the application repeatedly with the
 
 ### Edge Cases
 
-- **Row with empty target (`watch,` in `data/small-dag.csv`)**: Source is present but target is empty string. Handled per clarification (treated as isolated vertex vs skipped with warning vs rejected).
-- **Duplicate directed edge (`Data Structures,Algorithms` in `data/cs-curriculum.csv`)**: Appears on line 11 and line 25. Reported to stderr; graph stores single directed edge.
+- **Row with empty target (`watch,` in `data/small-dag.csv`)**: Source is present but target is empty string. Treated as an isolated vertex declaration: vertex is added with in-degree 0 and out-degree 0, zero edges are created, and an informational notice is emitted to stderr. Loading succeeds.
+- **Duplicate directed edge (`Data Structures,Algorithms` in `data/cs-curriculum.csv`)**: Appears on line 11 and line 25. Reported with a warning to stderr detailing line number; the edge is stored once in the graph model.
 - **Self-loops (`metrics,metrics` in `data/build-with-cycle.csv`)**: Source equals target. In Feature 1, this is represented as a valid directed edge `metrics -> metrics` and displayed under edges.
 - **Directed cycles (`auth -> session -> user-profile -> auth` in `data/build-with-cycle.csv`)**: In Feature 1, cycles are valid directed graph topologies and are loaded and displayed without error.
 - **Missing or unreadable file**: File path does not exist, points to a directory, or lacks read permissions. Must report error to stderr and exit with non-zero status.
@@ -102,14 +111,17 @@ A user or automated testing harness executes the application repeatedly with the
 
 ### Functional Requirements
 
-- **FR-001**: The application MUST accept a path to a CSV file as a command-line argument.
+- **FR-001**: The application MUST accept a path to a CSV file as a command-line argument (supporting invocation as `python3 -m src.cli <file.csv>` as well as optional subcommand format `python3 -m src.cli display <file.csv>`).
 - **FR-002**: The application MUST validate that the first line of the input CSV file is a header row containing exactly `source,target`. If the header is missing or does not match, the application MUST write a descriptive error to stderr and exit with status 1.
 - **FR-003**: The application MUST parse each valid two-column data row as a directed edge from `source` to `target`.
-- **FR-004**: The application MUST handle a row with an empty target field (e.g. `watch,`) according to [NEEDS CLARIFICATION: isolated vertex syntax vs malformed row for 'watch,'].
-- **FR-005**: The application MUST detect duplicate edges in the input file and handle them according to [NEEDS CLARIFICATION: duplicate edge deduplication and reporting policy].
+- **FR-004**: The application MUST treat a data row containing a non-empty source and an empty target field (e.g. `watch,`) as an isolated vertex declaration: the source vertex MUST be added to the graph with no incident edges, an informational notice MUST be emitted to stderr (specifying line number and vertex name), and execution MUST continue successfully with status 0.
+- **FR-005**: The application MUST detect duplicate directed edges in the input file. When a duplicate edge is encountered, the application MUST store the edge once in the graph model, emit a warning to stderr detailing the line number and the duplicated edge (`source -> target`), and continue execution without error.
 - **FR-006**: The application MUST trim leading and trailing whitespace from vertex names. If any vertex name was padded with whitespace, the application MUST emit a diagnostic notice to stderr describing the normalization performed.
 - **FR-007**: The application MUST allow directed self-loops (edges where source equals target) and directed cycles as valid edges in the directed graph structure.
-- **FR-008**: The application MUST display the loaded graph on stdout according to [NEEDS CLARIFICATION: CLI presentation layout and ordering].
+- **FR-008**: The application MUST display the loaded graph on stdout structured in two distinct sections with element counts:
+  1. A `Vertices (<count>):` section listing each unique vertex sorted in ascending lexicographical order, indented by 2 spaces.
+  2. An `Edges (<count>):` section listing each directed edge formatted as `<source> -> <target>` sorted lexicographically by source then target, indented by 2 spaces.
+  If the graph has 0 vertices or 0 edges, the count MUST show `(0)` and no indented items under that section.
 - **FR-009**: The application MUST ensure all vertex listings and edge listings in stdout are strictly deterministic (lexicographically sorted).
 - **FR-010**: The application MUST direct all successful graph output and summaries to stdout, and all diagnostic notices, warnings, and error messages to stderr.
 - **FR-011**: The application MUST exit with status code 0 when the graph is loaded and displayed successfully, and exit with status code 1 when encountering fatal errors (missing file, invalid header, or fatal row syntax errors).

@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,8 +31,8 @@
 
 ## Notes
 
-- 3 [NEEDS CLARIFICATION] markers present:
-  - Isolated vertex syntax vs malformed row for `watch,` in `small-dag.csv`
-  - Policy on duplicate edges (warn and deduplicate vs strict error)
-  - CLI display presentation and layout
-- These 3 clarifications must be resolved before proceeding to planning.
+- All 3 clarifications resolved during Session 2026-10-30:
+  1. Isolated vertex declaration syntax for `watch,` in `small-dag.csv` (degree 0, stderr notice).
+  2. Duplicate edge deduplication with warning to stderr.
+  3. Sectioned deterministic CLI layout (`Vertices (N):`, `Edges (M):`).
+- Specification is 100% complete and validated for `/speckit.plan`.
