@@ -1,6 +1,6 @@
 # Feature Specification: Directed Graphs (Loading & Display)
 
-**Feature Branch**: `Feature1`
+**Feature Branch**: `Feature1 (001-directed-graphs))`
 
 **Created**: 2026-10-30
 

@@ -32,7 +32,7 @@ description: "Task list for Directed Graphs (Loading & Display) implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T004 Write unit tests for `DirectedGraph` in `tests/unit/test_graph.py` asserting `add_vertex(v)`, `add_edge(u, v)`, `vertices()`, `edges()`, `successors(v)`, `predecessors(v)`, `in_degree(v)`, `out_degree(v)`, `has_vertex(v)`, `has_edge(u, v)`, self-loops `(u, u)`, and cycles (observe failing)
+- [ ] T004 Write unit tests for `DirectedGraph` in `tests/unit/test_graph.py` asserting `add_vertex(v)`, `add_edge(u, v)`, `vertices()`, `edges()`, `successors(v)`, `predecessors(v)`, `in_degree(v)`,`order()`,`size()`,`out_degree(v)`, `has_vertex(v)`, `has_edge(u, v)`, self-loops `(u, u)`, and cycles (observe failing)
 - [ ] T005 Implement `DirectedGraph` data model in `src/graph.py` with private `_adj: dict[str, set[str]]` and `_pred: dict[str, set[str]]`, zero I/O, ensuring invariants: `in_degree(v) == len(_pred[v])`, `out_degree(v) == len(_adj[v])`, and $O(1)$ duplicate edge rejection
 - [ ] T006 [P] Define data classes and exception types in `src/loader.py`: `DiagnosticLevel = Literal["NOTICE", "WARNING"]`, `Diagnostic(line_num: int, level: DiagnosticLevel, message: str)`, `LoadResult(graph: DirectedGraph, diagnostics: list[Diagnostic])`, and `GraphLoadError(Exception)` with `message: str` and optional `line_num: int | None`
 
