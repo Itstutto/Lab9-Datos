@@ -20,9 +20,9 @@ description: "Task list for Directed Graphs (Loading & Display) implementation"
 
 **Purpose**: Project initialization, directory structure, and development environment configuration.
 
-- [ ] T001 Create project package directory structure per implementation plan: `src/__init__.py`, `tests/__init__.py`, `tests/unit/__init__.py`, `tests/integration/__init__.py`, `tests/oracle/__init__.py`, and `tests/data/`
-- [ ] T002 [P] Create `pyproject.toml` with Python 3.11+ requirement, dev dependencies (`pytest`, `ruff`, `networkx`), ruff linter/formatter rules, and pytest test discovery paths
-- [ ] T003 [P] Create pytest configuration and shared fixtures in `tests/conftest.py` providing paths to `data/` and `tests/data/` fixtures
+- [x] T001 Create project package directory structure per implementation plan: `src/__init__.py`, `tests/__init__.py`, `tests/unit/__init__.py`, `tests/integration/__init__.py`, `tests/oracle/__init__.py`, and `tests/data/`
+- [x] T002 [P] Create `pyproject.toml` with Python 3.11+ requirement, dev dependencies (`pytest`, `ruff`, `networkx`), ruff linter/formatter rules, and pytest test discovery paths
+- [x] T003 [P] Create pytest configuration and shared fixtures in `tests/conftest.py` providing paths to `data/` and `tests/data/` fixtures
 
 ---
 
@@ -32,9 +32,9 @@ description: "Task list for Directed Graphs (Loading & Display) implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T004 Write unit tests for `DirectedGraph` in `tests/unit/test_graph.py` asserting `add_vertex(v)`, `add_edge(u, v)`, `vertices()`, `edges()`, `successors(v)`, `predecessors(v)`, `in_degree(v)`,`order()`,`size()`,`out_degree(v)`, `has_vertex(v)`, `has_edge(u, v)`, self-loops `(u, u)`, and cycles (observe failing)
-- [ ] T005 Implement `DirectedGraph` data model in `src/graph.py` with private `_adj: dict[str, set[str]]` and `_pred: dict[str, set[str]]`, zero I/O, ensuring invariants: `in_degree(v) == len(_pred[v])`, `out_degree(v) == len(_adj[v])`, and $O(1)$ duplicate edge rejection
-- [ ] T006 [P] Define data classes and exception types in `src/loader.py`: `DiagnosticLevel = Literal["NOTICE", "WARNING"]`, `Diagnostic(line_num: int, level: DiagnosticLevel, message: str)`, `LoadResult(graph: DirectedGraph, diagnostics: list[Diagnostic])`, and `GraphLoadError(Exception)` with `message: str` and optional `line_num: int | None`
+- [x] T004 Write unit tests for `DirectedGraph` in `tests/unit/test_graph.py` asserting `add_vertex(v)`, `add_edge(u, v)`, `vertices()`, `edges()`, `successors(v)`, `predecessors(v)`, `in_degree(v)`,`order()`,`size()`,`out_degree(v)`, `has_vertex(v)`, `has_edge(u, v)`, self-loops `(u, u)`, and cycles (observe failing)
+- [x] T005 Implement `DirectedGraph` data model in `src/graph.py` with private `_adj: dict[str, set[str]]` and `_pred: dict[str, set[str]]`, zero I/O, ensuring invariants: `in_degree(v) == len(_pred[v])`, `out_degree(v) == len(_adj[v])`, and $O(1)$ duplicate edge rejection
+- [x] T006 [P] Define data classes and exception types in `src/loader.py`: `DiagnosticLevel = Literal["NOTICE", "WARNING"]`, `Diagnostic(line_num: int, level: DiagnosticLevel, message: str)`, `LoadResult(graph: DirectedGraph, diagnostics: list[Diagnostic])`, and `GraphLoadError(Exception)` with `message: str` and optional `line_num: int | None`
 
 **Checkpoint**: Foundation ready — `DirectedGraph` model and base types tested and verified; User Story 1 can begin.
 
@@ -48,14 +48,14 @@ description: "Task list for Directed Graphs (Loading & Display) implementation"
 
 ### Tests for User Story 1 (Test-First: Write FIRST, observe FAILING) ⚠️
 
-- [ ] T007 [P] [US1] Create test fixture `tests/data/header_only.csv` containing exactly the header line `"source,target"` and zero data rows
-- [ ] T008 [P] [US1] Write unit tests in `tests/unit/test_loader.py` for valid graph loading: header validation matching `"source,target"`, standard edge parsing, and empty header-only file returning empty graph (`order() == 0`, `size() == 0`)
-- [ ] T009 [P] [US1] Write integration subprocess tests in `tests/integration/test_cli.py` for US1 acceptance scenarios 1.1, 1.2, and 1.3: execute CLI via subprocess against `data/small-dag.csv`, `data/build-with-cycle.csv`, and `tests/data/header_only.csv`, asserting exit code 0, 2-space indentation, and lexicographical ordering
+- [x] T007 [P] [US1] Create test fixture `tests/data/header_only.csv` containing exactly the header line `"source,target"` and zero data rows
+- [x] T008 [P] [US1] Write unit tests in `tests/unit/test_loader.py` for valid graph loading: header validation matching `"source,target"`, standard edge parsing, and empty header-only file returning empty graph (`order() == 0`, `size() == 0`)
+- [x] T009 [P] [US1] Write integration subprocess tests in `tests/integration/test_cli.py` for US1 acceptance scenarios 1.1, 1.2, and 1.3: execute CLI via subprocess against `data/small-dag.csv`, `data/build-with-cycle.csv`, and `tests/data/header_only.csv`, asserting exit code 0, 2-space indentation, and lexicographical ordering
 
 ### Implementation for User Story 1
 
-- [ ] T010 [US1] Implement valid CSV parsing in `src/loader.py`: open with `utf-8-sig`, validate header is exactly `["source", "target"]`, parse 2-column data rows, insert into `DirectedGraph`, and return `LoadResult(graph, diagnostics=[])`
-- [ ] T011 [US1] Implement CLI entry point and display formatting in `src/cli.py` using `argparse`: support `python3 -m src.cli [display] <file.csv>`, format stdout as `Vertices (<count>):` and `Edges (<count>):` with 2-space indent and lexicographical sorting, and exit 0
+- [x] T010 [US1] Implement valid CSV parsing in `src/loader.py`: open with `utf-8-sig`, validate header is exactly `["source", "target"]`, parse 2-column data rows, insert into `DirectedGraph`, and return `LoadResult(graph, diagnostics=[])`
+- [x] T011 [US1] Implement CLI entry point and display formatting in `src/cli.py` using `argparse`: support `python3 -m src.cli [display] <file.csv>`, format stdout as `Vertices (<count>):` and `Edges (<count>):` with 2-space indent and lexicographical sorting, and exit 0
 
 **Checkpoint**: User Story 1 (MVP) is fully functional and independently testable via `pytest tests/unit/test_loader.py tests/integration/test_cli.py -k US1`.
 
@@ -69,14 +69,14 @@ description: "Task list for Directed Graphs (Loading & Display) implementation"
 
 ### Tests for User Story 2 (Test-First: Write FIRST, observe FAILING) ⚠️
 
-- [ ] T012 [P] [US2] Create test fixtures `tests/data/padded_whitespace.csv` (rows with `" pants ", " shoes "`) and `tests/data/duplicate_edges.csv` (repeated edges)
-- [ ] T013 [P] [US2] Write unit tests in `tests/unit/test_loader.py` for US2: whitespace trimming generating `Diagnostic(level="NOTICE", message="Line {line}: normalized vertex '{raw}' -> '{trimmed}'")`, duplicate edge detection generating `Diagnostic(level="WARNING", message="Line {line}: duplicate edge '{source} -> {target}' ignored")`, and empty target generating `Diagnostic(level="NOTICE", message="Line {line}: added isolated vertex '{source}'")`
-- [ ] T014 [P] [US2] Write integration subprocess tests in `tests/integration/test_cli.py` for US2 acceptance scenarios 2.1, 2.2, and 2.3: execute CLI against `data/cs-curriculum.csv` (duplicate edge on line 25), `tests/data/padded_whitespace.csv`, and `data/small-dag.csv` (isolated vertex on line 11), asserting stderr output and exit code 0
+- [x] T012 [P] [US2] Create test fixtures `tests/data/padded_whitespace.csv` (rows with `" pants ", " shoes "`) and `tests/data/duplicate_edges.csv` (repeated edges)
+- [x] T013 [P] [US2] Write unit tests in `tests/unit/test_loader.py` for US2: whitespace trimming generating `Diagnostic(level="NOTICE", message="Line {line}: normalized vertex '{raw}' -> '{trimmed}'")`, duplicate edge detection generating `Diagnostic(level="WARNING", message="Line {line}: duplicate edge '{source} -> {target}' ignored")`, and empty target generating `Diagnostic(level="NOTICE", message="Line {line}: added isolated vertex '{source}'")`
+- [x] T014 [P] [US2] Write integration subprocess tests in `tests/integration/test_cli.py` for US2 acceptance scenarios 2.1, 2.2, and 2.3: execute CLI against `data/cs-curriculum.csv` (duplicate edge on line 25), `tests/data/padded_whitespace.csv`, and `data/small-dag.csv` (isolated vertex on line 11), asserting stderr output and exit code 0
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Implement whitespace trimming, duplicate edge tracking, and isolated vertex handling in `src/loader.py`: record line-numbered `Diagnostic` entries in encounter order within `LoadResult` without printing
-- [ ] T016 [US2] Update `src/cli.py` to iterate through `LoadResult.diagnostics` and write each formatted message to `sys.stderr` before printing graph output to `stdout`
+- [x] T015 [US2] Implement whitespace trimming, duplicate edge tracking, and isolated vertex handling in `src/loader.py`: record line-numbered `Diagnostic` entries in encounter order within `LoadResult` without printing
+- [x] T016 [US2] Update `src/cli.py` to iterate through `LoadResult.diagnostics` and write each formatted message to `sys.stderr` before printing graph output to `stdout`
 
 **Checkpoint**: User Stories 1 and 2 are fully functional and pass all unit and integration tests.
 
@@ -90,14 +90,14 @@ description: "Task list for Directed Graphs (Loading & Display) implementation"
 
 ### Tests for User Story 3 (Test-First: Write FIRST, observe FAILING) ⚠️
 
-- [ ] T017 [P] [US3] Create invalid test fixtures: `tests/data/empty_file.csv` (0 bytes), `tests/data/invalid_header.csv` (`from,to`), `tests/data/wrong_columns.csv` (row with 3 columns `a,b,c`), and `tests/data/empty_source.csv` (row with `,target`)
-- [ ] T018 [P] [US3] Write unit tests in `tests/unit/test_loader.py` asserting `GraphLoadError` is raised for non-existent paths, directories, empty files, invalid headers, wrong column counts, and empty source vertex values
-- [ ] T019 [P] [US3] Write integration subprocess tests in `tests/integration/test_cli.py` for US3 acceptance scenarios 3.1–3.4: asserting exit code 1, stderr starting with `Error: `, empty stdout, and zero unhandled tracebacks; also assert exit code 2 for CLI usage errors
+- [x] T017 [P] [US3] Create invalid test fixtures: `tests/data/empty_file.csv` (0 bytes), `tests/data/invalid_header.csv` (`from,to`), `tests/data/wrong_columns.csv` (row with 3 columns `a,b,c`), and `tests/data/empty_source.csv` (row with `,target`)
+- [x] T018 [P] [US3] Write unit tests in `tests/unit/test_loader.py` asserting `GraphLoadError` is raised for non-existent paths, directories, empty files, invalid headers, wrong column counts, and empty source vertex values
+- [x] T019 [P] [US3] Write integration subprocess tests in `tests/integration/test_cli.py` for US3 acceptance scenarios 3.1–3.4: asserting exit code 1, stderr starting with `Error: `, empty stdout, and zero unhandled tracebacks; also assert exit code 2 for CLI usage errors
 
 ### Implementation for User Story 3
 
-- [ ] T020 [US3] Implement fatal validation checks in `src/loader.py`: raise `GraphLoadError` on missing file, directory path, 0-byte empty file, header not matching `["source", "target"]`, column count `!= 2`, and empty source vertex after trimming
-- [ ] T021 [US3] Implement exception handling in `src/cli.py`: catch `GraphLoadError`, write `Error: {message}` to `sys.stderr`, and exit with code 1 without printing a stack trace
+- [x] T020 [US3] Implement fatal validation checks in `src/loader.py`: raise `GraphLoadError` on missing file, directory path, 0-byte empty file, header not matching `["source", "target"]`, column count `!= 2`, and empty source vertex after trimming
+- [x] T021 [US3] Implement exception handling in `src/cli.py`: catch `GraphLoadError`, write `Error: {message}` to `sys.stderr`, and exit with code 1 without printing a stack trace
 
 **Checkpoint**: User Stories 1, 2, and 3 are fully functional; all fatal error cases terminate gracefully with exit code 1.
 
@@ -111,13 +111,13 @@ description: "Task list for Directed Graphs (Loading & Display) implementation"
 
 ### Tests for User Story 4 (Test-First: Write FIRST, observe FAILING) ⚠️
 
-- [ ] T022 [P] [US4] Implement determinism integration tests in `tests/integration/test_cli.py` asserting byte-for-byte equality of stdout and stderr across repeated runs of `data/cs-curriculum.csv` and `data/build-with-cycle.csv`
-- [ ] T023 [P] [US4] Implement performance benchmark test in `tests/integration/test_performance.py` generating a synthetic graph with 10,000 edges and asserting load and display completes under 1.0 second (SC-001)
-- [ ] T024 [P] [US4] Implement oracle verification tests in `tests/oracle/test_networkx_oracle.py` using `networkx.DiGraph` to cross-check vertex sets and edge sets loaded from `data/*.csv` against NetworkX
+- [x] T022 [P] [US4] Implement determinism integration tests in `tests/integration/test_cli.py` asserting byte-for-byte equality of stdout and stderr across repeated runs of `data/cs-curriculum.csv` and `data/build-with-cycle.csv`
+- [x] T023 [P] [US4] Implement performance benchmark test in `tests/integration/test_performance.py` generating a synthetic graph with 10,000 edges and asserting load and display completes under 1.0 second (SC-001)
+- [x] T024 [P] [US4] Implement oracle verification tests in `tests/oracle/test_networkx_oracle.py` using `networkx.DiGraph` to cross-check vertex sets and edge sets loaded from `data/*.csv` against NetworkX
 
 ### Implementation for User Story 4
 
-- [ ] T025 [US4] Review and optimize sorting and collection in `src/cli.py` and `src/loader.py` to ensure strict deterministic ordering and sub-second execution for graphs with 10,000 edges
+- [x] T025 [US4] Review and optimize sorting and collection in `src/cli.py` and `src/loader.py` to ensure strict deterministic ordering and sub-second execution for graphs with 10,000 edges
 
 **Checkpoint**: All 4 user stories functional; determinism, performance, and oracle cross-checks pass.
 
@@ -127,9 +127,9 @@ description: "Task list for Directed Graphs (Loading & Display) implementation"
 
 **Purpose**: Quality gates, static analysis, formatting, and end-to-end documentation validation.
 
-- [ ] T026 [P] Run static analysis and formatting checks using `ruff check .` and `ruff format --check .`, fixing any warnings or formatting errors
-- [ ] T027 [P] Execute full test suite (`pytest -v`) and validate all manual scenarios in `specs/001-directed-graphs/quickstart.md`
-- [ ] T028 [P] Verify documentation links and reflection questions alignment in `specs/001-directed-graphs/`
+- [x] T026 [P] Run static analysis and formatting checks using `ruff check .` and `ruff format --check .`, fixing any warnings or formatting errors
+- [x] T027 [P] Execute full test suite (`pytest -v`) and validate all manual scenarios in `specs/001-directed-graphs/quickstart.md`
+- [x] T028 [P] Verify documentation links and reflection questions alignment in `specs/001-directed-graphs/`
 
 ---
 
